@@ -18,15 +18,15 @@ class UserRepository:
         return user
 
 
-    def get_all_user(self, payload:UserOut):
-        self.db.query(User_model).all(payload)
+    def get_all_user(self):
+        return self.db.query(User_model).all()
 
     
     def get_User_by_email(self, email:str):
-        self.db.query(User_model).filter(User_model.email == email).first()
+        return self.db.query(User_model).filter(User_model.email == email).first()
 
     def get_user_by_id(self, id:str):
-        self.db.query(User_model).filter(User_model.id == id).first()
+        return self.db.query(User_model).filter(User_model.id == id).first()
 
     def update_user(self, id:str, payload:UserCreate):
         db_update = self.db.query(User_model).filter(User_model.id == id).first()
