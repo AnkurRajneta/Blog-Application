@@ -26,7 +26,7 @@ class UserRepository:
         return self.db.query(User_model).filter(User_model.email == email).first()
 
     def get_user_by_id(self, id:str):
-        return self.db.query(User_model).filter(User_model.id == id).first()
+        return  self.db.query(User_model).filter(User_model.id == id).first()
 
     def update_user(self, id:str, payload:UserCreate):
         db_update = self.db.query(User_model).filter(User_model.id == id).first()
