@@ -1,0 +1,1 @@
+In this project, we have created a Blog API where we perform all CRUD operations along with authentication. We use primary and foreign keys to maintain proper relationships and ensure accurate results.
