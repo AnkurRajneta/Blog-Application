@@ -6,7 +6,7 @@ from app.models import *
 from app.controller.user_controller import router as user_router
 from app.controller.blog_controller import router as blog_router
 from app.controller.auth_controller import router as auth_router
-from app.middlewares.auth import get_current_user
+from app.middlewares.auth_middlewares import get_current_user
 
 
 Base.metadata.create_all(bind=engine)

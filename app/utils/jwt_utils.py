@@ -1,9 +1,8 @@
 import jwt
 from datetime import datetime, timedelta
+from app.config.config import SECRET_KEY,ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
-SECRET_KEY = "your-Secret-Key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
 
 def create_jwt(data: dict, expires_delta: timedelta = None) -> str:
     to_encode = data.copy()

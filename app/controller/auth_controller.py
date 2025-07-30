@@ -5,8 +5,8 @@ from app.schema.auth_schema import *
 
 from app.config.database import get_db
 from app.service.auth_service import AuthService
-from app.middlewares.auth import get_current_user
-from app.core.jwt import create_jwt
+from app.middlewares.auth_middlewares import get_current_user
+from app.utils.jwt_utils import create_jwt
 from fastapi.security import HTTPBearer
 
 

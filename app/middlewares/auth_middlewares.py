@@ -2,7 +2,7 @@ from fastapi import Header, HTTPException, Request, status, Depends
 from sqlalchemy.orm import Session
 from app.config.database import get_db
 from app.repository.user_repository import UserRepository
-from app.core.jwt import decode_jwt
+from app.utils.jwt_utils import decode_jwt
 
 def get_current_user(
     request:Request,

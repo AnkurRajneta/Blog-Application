@@ -1,5 +1,5 @@
 from typing import List
-from app.middlewares.auth import get_current_user
+from app.middlewares.auth_middlewares import get_current_user
 from app.models.user_model import User_model
 from app.service.blog_service import BlogService
 from app.schema.blog_schema import *
