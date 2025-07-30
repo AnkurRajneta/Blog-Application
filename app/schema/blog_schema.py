@@ -1,7 +1,8 @@
 from click import DateTime, Option
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
+from app.schema.user_schema import UserOut
 
 class BlogCreate(BaseModel):
     title: str = Field(min_length=2, example="FastAPI")
@@ -23,6 +24,7 @@ class BlogOut(BaseModel):
     created_by:Optional[int] = None
     created_at:datetime
     updated_at:datetime
+    user: Optional[UserOut] = None
 
     class Config:
         from_attributes = True

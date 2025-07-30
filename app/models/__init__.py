@@ -1,2 +1,2 @@
 from .user_model import User_model
-from .BlogModel import BlogModel
+from .blog_model import BlogModel

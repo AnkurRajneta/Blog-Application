@@ -1,5 +1,5 @@
-from app.models.BlogModel import BlogModel
-from app.schema.BlogSchema import BlogCreate, BlogUpdate
+from app.models.blog_model import BlogModel
+from app.schema.blog_schema import BlogCreate, BlogUpdate
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
@@ -7,9 +7,9 @@ class BlogRepository:
     def __init__(self, db : Session):
         self.db = db
 
-    def create_blog_repository(self,payload:BlogCreate):
+    def create_blog_repository(self,payload:BlogCreate,validated_user_id:int):
         new_blog = BlogModel(title = payload.title,
-                             description = payload.description)
+                             description = payload.description, created_by=validated_user_id)
         
         self.db.add(new_blog)
         self.db.commit()

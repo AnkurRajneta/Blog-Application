@@ -1,5 +1,5 @@
-from app.repository.BlogRepository import BlogRepository
-from app.schema.BlogSchema import *
+from app.repository.blog_repository import BlogRepository
+from app.schema.blog_schema import *
 from sqlalchemy.orm import Session
 
 
@@ -7,8 +7,8 @@ class BlogService:
     def __init__(self, db: Session):
         self.repo = BlogRepository(db)
 
-    def create_blog_service(self, payload:BlogCreate):
-        return self.repo.create_blog_repository(payload)
+    def create_blog_service(self, payload:BlogCreate, validated_user_id:int):
+        return self.repo.create_blog_repository(payload,validated_user_id)
     
     def get_blog_service_all(self):
         return self.repo.get_blog_repository_all()
