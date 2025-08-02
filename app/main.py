@@ -8,15 +8,17 @@ from app.controller.auth_controller import router as auth_router
 from app.middlewares.auth_middlewares import get_current_user
 
 
-Base.metadata.create_all(bind=engine)
+async def create_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 app = FastAPI(
     title="Blog API",
     version="1.0.0"
 )
 
-app.include_router(user_router, prefix="/api/v1/user", tags=["User"])
-app.include_router(blog_router, prefix ="/api/v1/blog", tags = ["Blog"])
+app.include_router(user_router, prefix="/api/v1/user", tags=["User"], dependencies=[Depends(get_current_user)])
+app.include_router(blog_router, prefix ="/api/v1/blog", tags = ["Blog"], dependencies=[Depends(get_current_user)])
 app.include_router(auth_router, prefix = "/api/v1/auth", tags=["auth"])
 
 

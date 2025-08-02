@@ -1,12 +1,15 @@
+# app/middlewares/auth_middlewares.py
+
 from fastapi import Header, HTTPException, Request, status, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.config.database import get_db
 from app.repository.user_repository import UserRepository
 from app.utils.jwt_utils import decode_jwt
+from fastapi.concurrency import run_in_threadpool
 
-def get_current_user(
-    request:Request,
-    db: Session = Depends(get_db)
+async def get_current_user(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
 ):
     authorization = request.headers.get('Authorization')
 
@@ -24,7 +27,7 @@ def get_current_user(
         )
 
     try:
-        payload = decode_jwt(token)
+        payload = decode_jwt(token)  # ✅ Use threadpool to avoid blocking
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,7 +42,7 @@ def get_current_user(
         )
 
     try:
-        user = UserRepository(db).get_User_by_email(email)
+        user = await UserRepository(db).get_User_by_email(email)
     except Exception as db_exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

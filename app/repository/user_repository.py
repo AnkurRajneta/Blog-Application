@@ -1,48 +1,60 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models.user_model import User_model
 from app.schema.user_schema import UserCreate, UserOut
 
 class UserRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create_user(self, payload:UserCreate):
+    async def create_user(self, payload:UserCreate):
         user = User_model(
             name =payload.name,
             email = payload.email,
             password = payload.password )
         self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return user
 
 
-    def get_all_user(self):
-        return self.db.query(User_model).all()
+    async def get_all_user(self):
+        get_all = select(User_model)
+        result = await self.db.execute(get_all)
+        
+        return result.scalars().all()
 
     
-    def get_User_by_email(self, email:str):
-        return self.db.query(User_model).filter(User_model.email == email).first()
+    async def get_User_by_email(self, email:str):
+        user_email = select(User_model).where(User_model.email == email)
+        result = await self.db.execute(user_email)
+        return result.scalars().first()
 
-    def get_user_by_id(self, id:str):
-        return  self.db.query(User_model).filter(User_model.id == id).first()
-
-    def update_user(self, id:str, payload:UserCreate):
-        db_update = self.db.query(User_model).filter(User_model.id == id).first()
-        db_update.name = payload.name
-        db_update.email = payload.email
-        db_update.password = payload.password
-        self.db.commit()
-        self.db.refresh(db_update)
-        return db_update
+    async def get_user_by_id(self, id:str):
+        user_id = select(User_model).where(User_model.id == id)
+        result = await self.db.execute(user_id)
+        return result.scalars().first()
+    
+    async def update_user(self, id:str, payload:UserCreate):
+        db_update = select(User_model).where(User_model.id ==id)
+        result = await self.db.execute(db_update)
+        updated =  result.scalars().first()
+        updated.name = payload.name
+        updated.email = payload.email
+        updated.password = payload.password
+        await self.db.commit()
+        await self.db.refresh(updated)
+        return updated
     
 
-    def delete_user(self, id:int):
-        db_delete = self.db.query(User_model).filter(id == User_model.id).first()
+    async def delete_user(self, id:int):
+        db_delete = select(User_model).where(User_model.id == id)
+        result = await self.db.execute(db_delete)
+        deleted = result.scalars().first()
 
-        self.db.delete(db_delete)
-        self.db.commit()
+        await self.db.delete(deleted)
+        await self.db.commit()
         return True
 
 
