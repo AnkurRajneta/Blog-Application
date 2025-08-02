@@ -14,7 +14,7 @@ from fastapi.security import HTTPBearer
 router = APIRouter()
 
 security = HTTPBearer()
-    
+
 
 @router.post('/login')
 def login(payload:AuthSchema, db: Session = Depends(get_db)):

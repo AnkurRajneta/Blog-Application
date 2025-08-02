@@ -10,14 +10,12 @@ def get_current_user(
 ):
     authorization = request.headers.get('Authorization')
 
-    # Ensure Authorization header is present and starts with "Bearer "
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing or invalid Authorization header"
         )
 
-    # Extract JWT token
     token = authorization[7:].strip()
     if not token:
         raise HTTPException(
@@ -25,7 +23,6 @@ def get_current_user(
             detail="Empty token in Authorization header"
         )
 
-    # Attempt to decode JWT
     try:
         payload = decode_jwt(token)
     except Exception as e:
@@ -34,7 +31,6 @@ def get_current_user(
             detail=f"Invalid or expired token: {str(e)}"
         )
 
-    # Ensure 'sub' claim exists in payload
     email = payload.get("sub")
     if not email:
         raise HTTPException(

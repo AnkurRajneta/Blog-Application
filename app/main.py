@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends
 from fastapi.openapi.utils import get_openapi
-
 from app.config.database import Base, engine
 from app.models import *
 from app.controller.user_controller import router as user_router
