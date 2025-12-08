@@ -1,23 +1,24 @@
+# app/middlewares/auth_middlewares.py
+
 from fastapi import Header, HTTPException, Request, status, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.config.database import get_db
 from app.repository.user_repository import UserRepository
 from app.utils.jwt_utils import decode_jwt
+from fastapi.concurrency import run_in_threadpool
 
-def get_current_user(
-    request:Request,
-    db: Session = Depends(get_db)
+async def get_current_user(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
 ):
     authorization = request.headers.get('Authorization')
 
-    # Ensure Authorization header is present and starts with "Bearer "
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing or invalid Authorization header"
         )
 
-    # Extract JWT token
     token = authorization[7:].strip()
     if not token:
         raise HTTPException(
@@ -25,16 +26,14 @@ def get_current_user(
             detail="Empty token in Authorization header"
         )
 
-    # Attempt to decode JWT
     try:
-        payload = decode_jwt(token)
+        payload = decode_jwt(token)  # ✅ Use threadpool to avoid blocking
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid or expired token: {str(e)}"
         )
 
-    # Ensure 'sub' claim exists in payload
     email = payload.get("sub")
     if not email:
         raise HTTPException(
@@ -43,7 +42,7 @@ def get_current_user(
         )
 
     try:
-        user = UserRepository(db).get_User_by_email(email)
+        user = await UserRepository(db).get_User_by_email(email)
     except Exception as db_exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

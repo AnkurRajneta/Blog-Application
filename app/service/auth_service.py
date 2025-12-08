@@ -1,19 +1,19 @@
 from app.repository.user_repository import UserRepository
 from app.schema.auth_schema import *
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class AuthService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.repo = UserRepository(db)
 
-    def auth_service(self, email, password):
-        user = self.repo.get_User_by_email(email)
+    async def auth_service(self, email, password):
+        user = await self.repo.get_User_by_email(email)
         if user and user.password == password:
             return user
         return None
     
-    def register_auth(self, payload:RegisterSchema):
-        new_user = self.repo.create_user(payload)
+    async def register_auth(self, payload:RegisterSchema):
+        new_user = await self.repo.create_user(payload)
         return new_user
 
 
